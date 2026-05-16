@@ -157,3 +157,18 @@ footer strong{color:var(--cyan);font-weight:600}
   .pipeline-connector{width:2px;height:20px}
   .kpi-row{grid-template-columns:1fr 1fr}
 }
+
+/* ═══ Print ═══ */
+@media print{
+  body{background:#fff;color:#111}
+  #navbar,.hero-glow,#upload-section,#pipeline-section,.btn-upload,.btn-analyze,footer{display:none!important}
+  #hero{padding:1rem 0}
+  #hero h1{-webkit-text-fill-color:#111;font-size:1.8rem}
+  .hero-sub{color:#444}
+  #results-section{max-width:100%;padding:0}
+  .result-card,.kpi-card{background:#f9f9f9;border:1px solid #ddd;backdrop-filter:none;break-inside:avoid}
+  .result-card h3{background:#eee;color:#111}
+  .card-body,.kpi-value{color:#222;-webkit-text-fill-color:#222}
+  .kpi-badge{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .risk-severity{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}

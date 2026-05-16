@@ -1,6 +1,7 @@
 """
 ClauseGuard AI — Autonomous Contract Intelligence Agent Pipeline
-Five specialized Gemini agents that analyze contracts autonomously.
+Six specialized Gemini agents that analyze contracts autonomously.
+Includes a self-auditing agent for cross-validation.
 """
 
 import json
@@ -13,7 +14,7 @@ import google.generativeai as genai
 
 
 class ContractAgentPipeline:
-    """Orchestrates 5 autonomous agents to analyze a contract end-to-end."""
+    """Orchestrates 6 autonomous agents to analyze a contract end-to-end."""
 
     def __init__(self, api_key: str):
         genai.configure(api_key=api_key)
@@ -158,6 +159,32 @@ class ContractAgentPipeline:
             yield self._evt("summary", "error", str(e))
             return
 
+        # ─── AGENT 6 — Audit & Cross-Validation ───────────────
+        yield self._evt("audit", "working", "Cross-validating all findings...")
+        try:
+            audit = await self._ask(
+                PROMPT_AUDIT.format(
+                    understanding_json=json.dumps(understanding, indent=2)[:2000],
+                    clauses_count=len(clauses.get("clauses", [])),
+                    risks_json=json.dumps(risks, indent=2)[:3000],
+                    summary_json=json.dumps(summary, indent=2)[:2000],
+                )
+            )
+            results["audit"] = audit
+            verdict = audit.get("verdict", "PASS")
+            issues = audit.get("issues_found", [])
+            yield self._evt(
+                "audit",
+                "complete",
+                {
+                    "summary": f"Audit {verdict} — {len(issues)} issues flagged",
+                    "detail": audit,
+                },
+            )
+        except Exception as e:
+            yield self._evt("audit", "error", str(e))
+            # Audit failure is non-fatal — proceed with results
+
         # ─── DONE ──────────────────────────────────────────────
         yield {"type": "pipeline_complete", "data": results}
 
@@ -266,5 +293,40 @@ Return JSON:
   "recommended_actions": ["string — specific action items before signing"],
   "negotiation_points": ["string — clauses that should be renegotiated"],
   "approval_recommendation": "string — APPROVE, APPROVE WITH CHANGES, or DO NOT SIGN"
+}}
+"""
+
+PROMPT_AUDIT = """You are an independent audit AI agent. Your job is to cross-validate the work of 5 other AI agents that analyzed a contract. Check for logical inconsistencies, missed risks, and over/under-rated severity.
+
+DOCUMENT UNDERSTANDING:
+{understanding_json}
+
+CLAUSES EXTRACTED: {clauses_count} total
+
+RISK ANALYSIS:
+{risks_json}
+
+EXECUTIVE SUMMARY:
+{summary_json}
+
+Perform these checks:
+1. Are there clause categories that should have been flagged but weren't?
+2. Is the overall risk score consistent with the individual risk severities?
+3. Are there any logical contradictions between the agents' outputs?
+4. Did the risk agent miss common dangerous patterns (unlimited liability, one-sided termination, perpetual IP licenses, broad non-competes)?
+
+Return JSON:
+{{
+  "verdict": "string — PASS, FLAG, or FAIL",
+  "confidence_score": "number 0-100 — how confident you are in the overall analysis",
+  "issues_found": [
+    {{
+      "type": "string — missed_risk, inconsistency, severity_mismatch, or missing_analysis",
+      "description": "string — what the issue is",
+      "recommendation": "string — how to address it"
+    }}
+  ],
+  "risk_score_validated": "boolean — true if the risk score seems accurate",
+  "analysis_quality": "string — brief assessment of the overall analysis quality"
 }}
 """

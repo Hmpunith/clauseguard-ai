@@ -17,8 +17,10 @@
   const agentLog = $("#agent-log");
   const navStatus = $("#nav-status");
   const btnNew = $("#btn-new");
+  const btnExport = $("#btn-export");
 
   let selectedFile = null;
+  let lastResults = null;
 
   // ── Upload handlers ──────────────────────────────────────
   uploadZone.addEventListener("click", () => fileInput.click());
@@ -84,6 +86,7 @@
         updateAgent(evt.agent, evt.status, evt.data);
       } else if (evt.type === "pipeline_complete") {
         finalData = evt.data;
+        lastResults = finalData;
       } else if (evt.type === "error") {
         addLog("system", "error", evt.message);
       } else if (evt.type === "stream_end") {
@@ -116,9 +119,10 @@
     extraction: "Extraction",
     risk: "Risk Analysis",
     summary: "Summary",
+    audit: "Audit",
   };
 
-  const AGENT_ORDER = ["ingestion", "understanding", "extraction", "risk", "summary"];
+  const AGENT_ORDER = ["ingestion", "understanding", "extraction", "risk", "summary", "audit"];
 
   function updateAgent(agent, status, data) {
     const node = $(`.agent-node[data-agent="${agent}"]`);
@@ -229,6 +233,22 @@
     }
     $("#actions-body").innerHTML = actionsHtml || "<p>No actions recommended.</p>";
 
+    // Audit results
+    const audit = data.audit || {};
+    const auditIssues = audit.issues_found || [];
+    let auditHtml = `<div style="display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap">`;
+    auditHtml += `<span class="tag" style="background:${audit.verdict === 'PASS' ? 'var(--green-dim)' : 'var(--amber-dim)'};color:${audit.verdict === 'PASS' ? 'var(--green)' : 'var(--amber)'};padding:.3rem .8rem;border-radius:6px;font-size:.75rem;font-weight:700">${escapeHtml(audit.verdict || 'N/A')}</span>`;
+    auditHtml += `<span style="color:var(--t2);font-size:.85rem">Confidence: <strong style="color:var(--cyan)">${audit.confidence_score || '?'}%</strong></span>`;
+    auditHtml += `<span style="color:var(--t2);font-size:.85rem">Score Validated: <strong style="color:${audit.risk_score_validated ? 'var(--green)' : 'var(--red)'}">${audit.risk_score_validated ? '✓ Yes' : '✗ No'}</strong></span>`;
+    auditHtml += `</div>`;
+    if (audit.analysis_quality) auditHtml += `<p style="margin-bottom:1rem">${escapeHtml(audit.analysis_quality)}</p>`;
+    if (auditIssues.length) {
+      auditHtml += auditIssues.map((i) => `<div class="risk-item"><div class="risk-severity medium">${escapeHtml(i.type || '?')}</div><div class="risk-details"><p>${escapeHtml(i.description || '')}</p><p class="rec">💡 ${escapeHtml(i.recommendation || '')}</p></div></div>`).join("");
+    } else {
+      auditHtml += `<p style="color:var(--green)">✓ All agent findings validated. No issues detected.</p>`;
+    }
+    $("#audit-body").innerHTML = auditHtml;
+
     // Document info
     const parties = understanding.parties || [];
     const sections = understanding.structure || [];
@@ -254,6 +274,17 @@
     selectedFile = null;
     fileInput.value = "";
     setNav("Ready", false);
+  });
+
+  // ── PDF Export ───────────────────────────────────────────
+  btnExport.addEventListener("click", () => {
+    const pipeEl = $("#pipeline-section");
+    const origPipe = pipeEl.style.display;
+    pipeEl.style.display = "none";
+    $("#navbar").style.position = "relative";
+    window.print();
+    pipeEl.style.display = origPipe;
+    $("#navbar").style.position = "sticky";
   });
 
   // ── Utils ────────────────────────────────────────────────

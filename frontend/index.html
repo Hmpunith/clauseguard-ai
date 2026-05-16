@@ -29,7 +29,7 @@
   <header id="hero">
     <div class="hero-glow"></div>
     <h1>Autonomous Contract Intelligence</h1>
-    <p class="hero-sub">Upload any contract. Five AI agents analyze risks, extract clauses, and generate an executive briefing — fully autonomously.</p>
+    <p class="hero-sub">Upload any contract. Six autonomous AI agents analyze risks, extract clauses, generate an executive briefing, and self-audit their findings — fully autonomously.</p>
   </header>
 
   <!-- ═══ UPLOAD ZONE ═══ -->
@@ -85,6 +85,12 @@
       <div class="agent-node" data-agent="summary">
         <div class="agent-icon">📝</div>
         <div class="agent-label">Summary</div>
+        <div class="agent-status">Pending</div>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="agent-node" data-agent="audit">
+        <div class="agent-icon">🔍</div>
+        <div class="agent-label">Audit</div>
         <div class="agent-status">Pending</div>
       </div>
     </div>
@@ -146,6 +152,12 @@
       <div class="card-body" id="actions-body"></div>
     </div>
 
+    <!-- Audit Results -->
+    <div class="result-card" id="card-audit">
+      <h3>🔍 Audit & Cross-Validation</h3>
+      <div class="card-body" id="audit-body"></div>
+    </div>
+
     <!-- Document Info -->
     <div class="result-card" id="card-doc">
       <h3>📄 Document Information</h3>
@@ -153,8 +165,9 @@
     </div>
 
     <!-- New Analysis -->
-    <div class="text-center">
-      <button class="btn-upload" id="btn-new" style="margin-top:2rem">Analyze Another Contract</button>
+    <div class="text-center" style="margin-top:2rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <button class="btn-analyze" id="btn-export">📄 Export PDF Report</button>
+      <button class="btn-upload" id="btn-new">Analyze Another Contract</button>
     </div>
   </section>
 
