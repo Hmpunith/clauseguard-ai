@@ -1,0 +1,6 @@
+.env
+__pycache__/
+backend/__pycache__/
+backend/uploads/
+*.pyc
+.DS_Store

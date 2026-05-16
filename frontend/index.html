@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClauseGuard AI — Autonomous Contract Intelligence</title>
+  <meta name="description" content="Upload any contract and let 5 autonomous AI agents analyze risks, extract clauses, and generate executive briefings in real time." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <!-- ═══ NAVBAR ═══ -->
+  <nav id="navbar">
+    <div class="nav-brand">
+      <div class="brand-icon">🛡️</div>
+      <div>
+        <span class="brand-name">ClauseGuard</span>
+        <span class="brand-tag">AI</span>
+      </div>
+    </div>
+    <div class="nav-links">
+      <span class="nav-status" id="nav-status">Ready</span>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <header id="hero">
+    <div class="hero-glow"></div>
+    <h1>Autonomous Contract Intelligence</h1>
+    <p class="hero-sub">Upload any contract. Five AI agents analyze risks, extract clauses, and generate an executive briefing — fully autonomously.</p>
+  </header>
+
+  <!-- ═══ UPLOAD ZONE ═══ -->
+  <section id="upload-section">
+    <div class="upload-zone" id="upload-zone">
+      <div class="upload-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="12" y1="18" x2="12" y2="12"/>
+          <polyline points="9 15 12 12 15 15"/>
+        </svg>
+      </div>
+      <p class="upload-title">Drop your contract here</p>
+      <p class="upload-hint">PDF, PNG, JPG, or WebP — up to 20 MB</p>
+      <button class="btn-upload" id="btn-browse">Browse Files</button>
+      <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp" hidden />
+    </div>
+    <div class="file-info" id="file-info" style="display:none">
+      <span class="file-name" id="file-name"></span>
+      <button class="btn-analyze" id="btn-analyze">🚀 Analyze Contract</button>
+    </div>
+  </section>
+
+  <!-- ═══ AGENT PIPELINE ═══ -->
+  <section id="pipeline-section" style="display:none">
+    <h2 class="section-title">Agent Pipeline</h2>
+    <div class="pipeline" id="pipeline">
+      <div class="agent-node" data-agent="ingestion">
+        <div class="agent-icon">📥</div>
+        <div class="agent-label">Ingestion</div>
+        <div class="agent-status">Pending</div>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="agent-node" data-agent="understanding">
+        <div class="agent-icon">🧠</div>
+        <div class="agent-label">Understanding</div>
+        <div class="agent-status">Pending</div>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="agent-node" data-agent="extraction">
+        <div class="agent-icon">📋</div>
+        <div class="agent-label">Extraction</div>
+        <div class="agent-status">Pending</div>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="agent-node" data-agent="risk">
+        <div class="agent-icon">⚠️</div>
+        <div class="agent-label">Risk Analysis</div>
+        <div class="agent-status">Pending</div>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="agent-node" data-agent="summary">
+        <div class="agent-icon">📝</div>
+        <div class="agent-label">Summary</div>
+        <div class="agent-status">Pending</div>
+      </div>
+    </div>
+    <div class="agent-log" id="agent-log"></div>
+  </section>
+
+  <!-- ═══ RESULTS DASHBOARD ═══ -->
+  <section id="results-section" style="display:none">
+    <h2 class="section-title">Analysis Results</h2>
+
+    <!-- KPI Row -->
+    <div class="kpi-row" id="kpi-row">
+      <div class="kpi-card" id="kpi-risk">
+        <div class="kpi-label">Risk Score</div>
+        <div class="kpi-value" id="kpi-risk-value">—</div>
+        <div class="kpi-badge" id="kpi-risk-badge">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Clauses Found</div>
+        <div class="kpi-value" id="kpi-clauses">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Risk Factors</div>
+        <div class="kpi-value" id="kpi-risks">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Recommendation</div>
+        <div class="kpi-value kpi-rec" id="kpi-recommendation">—</div>
+      </div>
+    </div>
+
+    <!-- Executive Summary -->
+    <div class="result-card" id="card-summary">
+      <h3>📝 Executive Summary</h3>
+      <div class="card-body" id="summary-body"></div>
+    </div>
+
+    <!-- Top Concerns -->
+    <div class="result-card" id="card-concerns">
+      <h3>🚨 Top Concerns</h3>
+      <div class="card-body" id="concerns-body"></div>
+    </div>
+
+    <!-- Risk Details -->
+    <div class="result-card" id="card-risks">
+      <h3>⚠️ Risk Breakdown</h3>
+      <div class="card-body" id="risks-body"></div>
+    </div>
+
+    <!-- Clauses -->
+    <div class="result-card" id="card-clauses">
+      <h3>📋 Extracted Clauses</h3>
+      <div class="card-body" id="clauses-body"></div>
+    </div>
+
+    <!-- Negotiation & Actions -->
+    <div class="result-card" id="card-actions">
+      <h3>✅ Recommended Actions</h3>
+      <div class="card-body" id="actions-body"></div>
+    </div>
+
+    <!-- Document Info -->
+    <div class="result-card" id="card-doc">
+      <h3>📄 Document Information</h3>
+      <div class="card-body" id="doc-body"></div>
+    </div>
+
+    <!-- New Analysis -->
+    <div class="text-center">
+      <button class="btn-upload" id="btn-new" style="margin-top:2rem">Analyze Another Contract</button>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <p>ClauseGuard AI — Powered by <strong>Gemini</strong> · Deployed on <strong>Vultr</strong></p>
+    <p class="footer-sub">Milan AI Week 2026 — AI Agent Olympics Hackathon</p>
+  </footer>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
